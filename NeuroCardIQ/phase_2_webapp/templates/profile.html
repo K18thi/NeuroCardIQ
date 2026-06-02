@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Profile — Mental Health Risk Assessment</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg,#e8f4ff,#f6fbff);
+  color:#1f2d3d;
+  min-height:100vh;
+}
+
+/* Navbar */
+nav {
+  background:white;
+  padding:16px 40px;
+  display:flex;
+  align-items:center;
+  box-shadow:0 4px 12px rgba(0,0,0,0.06);
+}
+nav .brand {
+  font-weight:600;
+  font-size:1.1rem;
+  color:#2b6cb0;
+}
+nav .nav-links {
+  margin-left:auto;
+  display:flex;
+  gap:12px;
+}
+nav a {
+  text-decoration:none;
+  padding:8px 16px;
+  border-radius:8px;
+  font-size:0.9rem;
+  color:#2b6cb0;
+}
+nav a:hover {
+  background:#e6f0ff;
+}
+nav .btn-signout {
+  background:#ffe5e5;
+  color:#c53030;
+}
+
+/* Layout */
+main {
+  max-width:1100px;
+  margin:40px auto;
+  padding:0 20px;
+}
+
+/* Welcome */
+.welcome {
+  background:white;
+  padding:28px;
+  border-radius:16px;
+  display:flex;
+  align-items:center;
+  gap:18px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.05);
+  margin-bottom:24px;
+}
+.avatar {
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  background:#2b6cb0;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:600;
+  font-size:1.4rem;
+}
+
+/* Cards */
+.card, .stat-card, .danger-zone {
+  background:white;
+  border-radius:16px;
+  padding:24px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.05);
+}
+
+/* Stats */
+.stats-row {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-bottom:24px;
+}
+.stat-card {
+  text-align:center;
+}
+.stat-card .val {
+  font-size:1.8rem;
+  font-weight:600;
+  color:#2b6cb0;
+}
+
+/* Grid */
+.grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+/* Form */
+.form-group {
+  margin-bottom:14px;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width:100%;
+  padding:10px 14px;
+  border:1px solid #cbd5e0;
+  border-radius:8px;
+}
+
+/* Buttons */
+.btn-save,.btn-analyze,.btn-dashboard {
+  display:block;
+  width:100%;
+  margin-top:12px;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  font-weight:500;
+  background:#2b6cb0;
+  color:white;
+  text-align:center;
+  text-decoration:none;
+}
+
+.danger-zone {
+  border:1px solid #fed7d7;
+  background:#fff5f5;
+}
+.btn-delete {
+  background:#c53030;
+  color:white;
+  padding:10px 18px;
+  border:none;
+  border-radius:8px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Navbar -->
+<nav>
+  <div class="brand">🧠 Mental Health Risk</div>
+  <div class="nav-links">
+    <a href="/profile" class="active">👤 Profile</a>
+    <a href="/analyze">⚡ Analyze</a>
+    <a href="/dashboard">📊 Dashboard</a>
+    <a href="/signout" class="btn-signout">Sign Out</a>
+  </div>
+</nav>
+
+<main>
+
+  <!-- Flash messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="flash {{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endwith %}
+
+  <!-- Welcome -->
+  <div class="welcome">
+    <div class="avatar">
+      {{ (profile.name or 'U')[:1]|upper }}
+    </div>
+
+    <div>
+      <h2>Welcome, {{ profile.name or 'User' }}! 👋</h2>
+      <p>
+        {{ profile.profession }} ·
+        {{ profile.age }} yrs ·
+        {{ profile.gender }} ·
+        {{ profile.avg_working_hours }}h/day avg
+      </p>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="val">{{ total_analyses }}</div>
+      <div>Total Analyses</div>
+    </div>
+    <div class="stat-card">
+      <div class="val">{{ risk_counts['Low Risk'] }}</div>
+      <div>🟢 Low Risk</div>
+    </div>
+    <div class="stat-card">
+      <div class="val">{{ risk_counts['Medium Risk'] }}</div>
+      <div>🟡 Medium Risk</div>
+    </div>
+    <div class="stat-card">
+      <div class="val">{{ risk_counts['High Risk'] }}</div>
+      <div>🔴 High Risk</div>
+    </div>
+  </div>
+
+  <!-- Grid -->
+  <div class="grid">
+
+    <!-- Profile Form -->
+    <div class="card">
+      <h3>✏️ Edit Profile</h3>
+
+      <form method="POST" action="/profile">
+
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" name="name" value="{{ profile.name }}" required>
+        </div>
+
+        <div class="form-group">
+          <label>Age</label>
+          <input type="number" name="age" value="{{ profile.age }}" required>
+        </div>
+
+        <div class="form-group">
+          <label>Gender</label>
+          <select name="gender">
+            {% for g in ['Male','Female','Non-binary','Prefer not to say'] %}
+              <option value="{{ g }}" {% if profile.gender == g %}selected{% endif %}>
+                {{ g }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Working Hours</label>
+          <input type="number" name="avg_working_hours"
+                 value="{{ profile.avg_working_hours }}">
+        </div>
+
+        <!-- Height Weight -->
+        <div class="form-group">
+          <label>Height (cm)</label>
+          <input type="number" name="height_cm"
+                 value="{{ profile.height_cm or '' }}">
+        </div>
+
+        <div class="form-group">
+          <label>Weight (kg)</label>
+          <input type="number" name="weight_kg"
+                 value="{{ profile.weight_kg or '' }}">
+        </div>
+
+        <!-- BMI -->
+        {% if profile.height_cm and profile.weight_kg %}
+          {% set bmi = profile.weight_kg / ((profile.height_cm / 100) ** 2) %}
+          <p><b>BMI:</b> {{ '%.1f'|format(bmi) }}</p>
+        {% endif %}
+
+        <div class="form-group">
+          <label>Profession</label>
+          <input type="text" name="profession"
+                 value="{{ profile.profession }}">
+        </div>
+
+        <div class="form-group">
+          <label>Health Issues</label>
+          <textarea name="health_issues">
+{{ profile.health_issues or '' }}
+          </textarea>
+        </div>
+
+        <button class="btn-save">Save</button>
+      </form>
+    </div>
+
+    <!-- Right Side -->
+    <div class="card">
+      <h3>📋 Last Analysis</h3>
+
+      {% if last_analysis %}
+        <p><b>{{ last_analysis.risk_name }}</b></p>
+        <p>{{ last_analysis.confidence }}%</p>
+      {% else %}
+        <p>No data yet</p>
+      {% endif %}
+
+      <a href="/analyze" class="btn-analyze">New Analysis</a>
+      <a href="/dashboard" class="btn-dashboard">Dashboard</a>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="danger-zone">
+      <h3>⚠️ Danger Zone</h3>
+
+      <form method="POST" action="/delete-account">
+        <input type="password" name="password"
+               placeholder="Enter password">
+        <button class="btn-delete">Delete Account</button>
+      </form>
+    </div>
+
+  </div>
+
+</main>
+
+</body>
+</html>

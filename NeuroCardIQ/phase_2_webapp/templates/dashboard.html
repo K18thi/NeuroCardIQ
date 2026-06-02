@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Dashboard — NeuroCardiQ</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #f0f7ff;
+  color: #1a2a3a;
+  min-height: 100vh;
+}
+
+/* ── Navbar ── */
+nav {
+  background: #ffffff;
+  border-bottom: 1px solid #cce0f5;
+  padding: 14px 40px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(26,111,189,0.08);
+}
+.brand { color: #1a6fbd; font-size: 1.1rem; font-weight: 600; }
+.nav-links { display: flex; gap: 8px; margin-left: auto; }
+nav a {
+  color: #4a6a88; text-decoration: none;
+  padding: 7px 16px; border-radius: 8px;
+  font-size: 0.88rem; transition: all 0.2s; font-weight: 500;
+}
+nav a:hover     { background: #e0f0ff; color: #1a6fbd; }
+nav a.active    { background: #1a6fbd; color: #ffffff; }
+nav a.btn-signout {
+  background: #fff0f0; color: #e05c5c;
+  border: 1px solid #f5c0c0;
+}
+nav a.btn-signout:hover { background: #ffe0e0; }
+
+/* ── Main ── */
+main { max-width: 1200px; margin: 36px auto; padding: 0 24px; }
+
+/* ── Page header ── */
+.page-header {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px; flex-wrap: wrap; gap: 12px;
+}
+.page-header h1 { font-size: 1.5rem; color: #1a6fbd; font-weight: 600; }
+.page-header p  { color: #4a6a88; font-size: 0.88rem; margin-top: 3px; }
+.export-btns { display: flex; gap: 10px; }
+.btn-export {
+  padding: 9px 18px; border-radius: 8px;
+  font-size: 0.85rem; font-weight: 600;
+  cursor: pointer; text-decoration: none;
+  transition: all 0.2s; border: none; font-family: inherit;
+}
+.btn-csv  { background: #e8fff4; color: #1a8a5a; border: 1px solid #9fe1cb; }
+.btn-csv:hover  { background: #d0f5e8; }
+.btn-pdf  { background: #e0f0ff; color: #1a6fbd; border: 1px solid #9fd4f5; }
+.btn-pdf:hover  { background: #cce4f7; }
+
+/* ── No data ── */
+.no-data {
+  text-align: center; padding: 80px 24px;
+  background: #ffffff; border-radius: 20px;
+  border: 1px solid #cce0f5;
+}
+.no-data h3 { color: #1a6fbd; margin: 16px 0 8px; font-size: 1.1rem; }
+.no-data p  { color: #7aaac8; font-size: 0.88rem; }
+.btn-go {
+  display: inline-block; margin-top: 20px;
+  padding: 11px 28px;
+  background: linear-gradient(135deg, #5aa9e6, #1a6fbd);
+  color: white; border-radius: 10px;
+  text-decoration: none; font-weight: 600;
+  transition: all 0.2s;
+}
+.btn-go:hover { opacity: 0.9; transform: translateY(-1px); }
+
+/* ── Summary cards ── */
+.summary-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px; margin-bottom: 24px;
+}
+.sum-card {
+  background: #ffffff; border-radius: 14px;
+  padding: 18px 16px; text-align: center;
+  border: 1px solid #cce0f5;
+  box-shadow: 0 2px 8px rgba(26,111,189,0.06);
+}
+.sum-card .val {
+  font-size: 1.7rem; font-weight: 600; color: #1a6fbd;
+}
+.sum-card .lbl {
+  font-size: 0.72rem; color: #7aaac8; margin-top: 4px;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.sum-low    .val { color: #3ab87a; }
+.sum-medium .val { color: #e8a840; }
+.sum-high   .val { color: #e05c5c; }
+.sum-trend  .val { font-size: 1.1rem; }
+
+/* ── Grid layouts ── */
+.dash-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px; margin-bottom: 20px;
+}
+.dash-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px; margin-bottom: 20px;
+}
+
+/* ── Cards ── */
+.card {
+  background: #ffffff; border-radius: 16px;
+  padding: 24px; border: 1px solid #cce0f5;
+  box-shadow: 0 2px 12px rgba(26,111,189,0.06);
+}
+.card h3 {
+  font-size: 0.8rem; text-transform: uppercase;
+  letter-spacing: 1.2px; color: #1a6fbd;
+  margin-bottom: 20px; font-weight: 600;
+}
+
+/* ── Trend badge ── */
+.trend-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 16px; border-radius: 20px;
+  font-size: 0.85rem; font-weight: 600; margin-bottom: 14px;
+}
+.trend-improving { background: #e8fff4; color: #1a8a5a; border: 1px solid #9fe1cb; }
+.trend-worsening { background: #fff0f0; color: #e05c5c; border: 1px solid #f5c0c0; }
+.trend-stable    { background: #e0f0ff; color: #1a6fbd; border: 1px solid #9fd4f5; }
+
+/* ── Recommendations ── */
+.rec-item {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 12px 14px; background: #f8fcff;
+  border-radius: 10px; margin-bottom: 10px;
+  border: 1px solid #e0f0ff;
+}
+.rec-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
+.rec-text h4 { font-size: 0.85rem; color: #1a2a3a; margin-bottom: 3px; font-weight: 500; }
+.rec-text p  { font-size: 0.78rem; color: #7aaac8; line-height: 1.5; }
+.rec-high   { border-left: 3px solid #e05c5c; }
+.rec-medium { border-left: 3px solid #e8a840; }
+.rec-low    { border-left: 3px solid #3ab87a; }
+
+/* ── History table ── */
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+th {
+  text-align: left; color: #7aaac8; padding: 10px 12px;
+  border-bottom: 2px solid #e0f0ff;
+  text-transform: uppercase; letter-spacing: 0.8px;
+  font-size: 0.72rem; font-weight: 600;
+}
+td { padding: 12px 12px; border-bottom: 1px solid #f0f7ff; }
+tr:hover td { background: #f8fcff; }
+
+.risk-pill {
+  padding: 4px 14px; border-radius: 20px;
+  font-size: 0.78rem; font-weight: 600; display: inline-block;
+}
+.pill-low    { background: #e8fff4; color: #1a8a5a; border: 1px solid #9fe1cb; }
+.pill-medium { background: #fff8e8; color: #b07a10; border: 1px solid #f5d080; }
+.pill-high   { background: #fff0f0; color: #c03030; border: 1px solid #f5c0c0; }
+
+.agree-yes { color: #3ab87a; font-size: 0.8rem; }
+.agree-no  { color: #e8a840; font-size: 0.8rem; }
+
+/* ── Mini bars ── */
+.mini-bar-wrap { display: flex; gap: 4px; align-items: center; }
+.mini-bar {
+  height: 6px; border-radius: 3px;
+  background: #e0f0ff; flex: 1; overflow: hidden;
+}
+.mini-fill { height: 100%; border-radius: 3px; }
+.fill-brain       { background: #8a78e0; }
+.fill-heart       { background: #e05c5c; }
+.fill-interaction { background: #28b8c8; }
+
+/* ── Chart container ── */
+.chart-container {
+  position: relative;
+  width: 100%;
+  min-height: 200px;
+}
+
+/* ── Personal factors ── */
+.factor-tag {
+  display: inline-block;
+  padding: 4px 12px;
+  background: #e0f0ff;
+  color: #1a6fbd;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  margin: 3px;
+}
+
+/* ── BMI badge ── */
+.bmi-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 16px; border-radius: 10px;
+  font-size: 0.85rem; font-weight: 500;
+  background: #f0f7ff; border: 1px solid #cce0f5;
+  margin-top: 8px;
+}
+
+@media (max-width: 900px) {
+  .summary-row  { grid-template-columns: repeat(3, 1fr); }
+  .dash-grid    { grid-template-columns: 1fr; }
+  .dash-grid-3  { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .summary-row  { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Navbar ── -->
+<nav>
+  <span style="font-size:16px">🧠</span>
+  <div class="brand">NeuroCardiQ</div>
+  <div class="nav-links">
+    <a href="/profile">👤 Profile</a>
+    <a href="/analyze">⚡ Analyze</a>
+    <a href="/dashboard" class="active">📊 Dashboard</a>
+    <a href="/signout" class="btn-signout">Sign Out</a>
+  </div>
+</nav>
+
+<main>
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div>
+      <h1>📊 Performance Dashboard</h1>
+      <p>{{ profile.name }}'s risk analysis history &amp; trends</p>
+    </div>
+    {% if analyses %}
+    <div class="export-btns">
+      <a href="/export/csv" class="btn-export btn-csv">⬇️ Export CSV</a>
+      <a href="/export/pdf" class="btn-export btn-pdf">📄 Export PDF</a>
+    </div>
+    {% endif %}
+  </div>
+
+  {% if not analyses %}
+  <!-- No data -->
+  <div class="no-data">
+    <div style="font-size:3rem">📭</div>
+    <h3>No analyses yet</h3>
+    <p>Run your first EEG + ECG analysis to start tracking your risk trends.</p>
+    <a href="/analyze" class="btn-go">⚡ Start Analysis</a>
+  </div>
+
+  {% else %}
+
+  <!-- Summary cards (built by JS) -->
+  <div class="summary-row" id="summary-row"></div>
+
+  <!-- Charts row -->
+  <div class="dash-grid">
+    <div class="card">
+      <h3>📈 Risk Level Trend Over Time</h3>
+      <div class="chart-container">
+        <canvas id="trend-chart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🥧 Risk Distribution</h3>
+      <div class="chart-container" style="min-height:220px">
+        <canvas id="dist-chart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confidence + Block + Trend -->
+  <div class="dash-grid-3">
+    <div class="card">
+      <h3>📊 Confidence Over Time</h3>
+      <div class="chart-container" style="min-height:160px">
+        <canvas id="conf-chart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🧠💓 Avg Block Contribution</h3>
+      <div class="chart-container" style="min-height:160px">
+        <canvas id="block-chart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <h3>📉 Risk Change</h3>
+      <div id="trend-summary"></div>
+    </div>
+  </div>
+
+  <!-- Recommendations -->
+  <div class="card" style="margin-bottom:20px">
+    <h3>💡 Personalised Recommendations</h3>
+    <div id="recommendations"></div>
+  </div>
+
+  <!-- History table -->
+  <div class="card" style="margin-bottom:40px">
+    <h3>📋 Full Analysis History</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Date</th>
+            <th>Risk Level</th>
+            <th>Confidence</th>
+            <th>Low / Med / High</th>
+            <th>Brain–Heart–Int</th>
+            <th>XGB</th>
+            <th>RF</th>
+            <th>Agree</th>
+          </tr>
+        </thead>
+        <tbody id="history-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  {% endif %}
+
+</main>
+
+<!-- Load Chart.js FIRST before any scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+
+<script>
+// ── Safe JSON from Flask ──────────────────────────────────────
+const RAW_ANALYSES = JSON.parse('{{ analyses | tojson | safe }}');
+const PROFILE = JSON.parse(`{
+  "name": {{ profile.name | tojson | safe }},
+  "avg_working_hours": {{ profile.avg_working_hours | tojson | safe }},
+  "health_issues": {{ (profile.health_issues or "") | tojson | safe }},
+  "profession": {{ profile.profession | tojson | safe }}
+}`);
+
+// ── Only build dashboard if we have data ─────────────────────
+if (RAW_ANALYSES && RAW_ANALYSES.length > 0) {
+  buildDashboard(RAW_ANALYSES);
+}
+
+function buildDashboard(analyses) {
+  const rev = [...analyses].reverse();  // oldest → newest for charts
+
+  const total   = analyses.length;
+  const avgConf = (analyses.reduce((s,a) => s + a.confidence, 0) / total).toFixed(1);
+  const lowCnt  = analyses.filter(a => a.risk_level === 0).length;
+  const medCnt  = analyses.filter(a => a.risk_level === 1).length;
+  const highCnt = analyses.filter(a => a.risk_level === 2).length;
+  const latest  = analyses[0];
+  const prev    = analyses[1] || null;
+
+  let trendIcon = '➡️', trendLabel = 'Stable', trendClass = 'stable';
+  if (prev) {
+    if (latest.risk_level < prev.risk_level) {
+      trendIcon = '📉'; trendLabel = 'Improving'; trendClass = 'improving';
+    } else if (latest.risk_level > prev.risk_level) {
+      trendIcon = '📈'; trendLabel = 'Worsening'; trendClass = 'worsening';
+    }
+  }
+
+  // ── Summary cards ───────────────────────────────────────────
+  document.getElementById('summary-row').innerHTML = `
+    <div class="sum-card">
+      <div class="val">${total}</div>
+      <div class="lbl">Total Analyses</div>
+    </div>
+    <div class="sum-card sum-low">
+      <div class="val">${lowCnt}</div>
+      <div class="lbl">🟢 Low Risk</div>
+    </div>
+    <div class="sum-card sum-medium">
+      <div class="val">${medCnt}</div>
+      <div class="lbl">🟡 Medium Risk</div>
+    </div>
+    <div class="sum-card sum-high">
+      <div class="val">${highCnt}</div>
+      <div class="lbl">🔴 High Risk</div>
+    </div>
+    <div class="sum-card sum-trend">
+      <div class="val">${trendIcon} ${trendLabel}</div>
+      <div class="lbl">Latest Trend</div>
+    </div>
+  `;
+
+  const labels   = rev.map(a => a.timestamp);
+  const riskVals = rev.map(a => a.risk_level);
+  const confVals = rev.map(a => a.confidence);
+  const colMap   = ['#3ab87a', '#e8a840', '#e05c5c'];
+
+  // ── Trend chart ─────────────────────────────────────────────
+  const trendCtx = document.getElementById('trend-chart');
+  if (trendCtx) {
+    new Chart(trendCtx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Risk Level',
+          data: riskVals,
+          borderColor: '#1a6fbd',
+          backgroundColor: 'rgba(26,111,189,0.08)',
+          pointBackgroundColor: riskVals.map(v => colMap[v]),
+          pointRadius: 7,
+          pointHoverRadius: 9,
+          tension: 0.3,
+          fill: true,
+          borderWidth: 2,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+          y: {
+            min: -0.3, max: 2.3,
+            ticks: {
+              color: '#7aaac8',
+              callback: v => ['Low','Med','High'][v] ?? ''
+            },
+            grid: { color: '#e8f4ff' }
+          },
+          x: {
+            ticks: {
+              color: '#7aaac8',
+              maxRotation: 35,
+              font: { size: 10 }
+            },
+            grid: { color: '#e8f4ff' }
+          }
+        },
+        plugins: {
+          legend: { labels: { color: '#4a6a88', font: { size: 11 } } },
+          tooltip: {
+            callbacks: {
+              label: ctx => {
+                const names = ['Low Risk','Medium Risk','High Risk'];
+                return ' ' + (names[ctx.raw] ?? ctx.raw);
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // ── Distribution donut ───────────────────────────────────────
+  const distCtx = document.getElementById('dist-chart');
+  if (distCtx) {
+    new Chart(distCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Low Risk','Medium Risk','High Risk'],
+        datasets: [{
+          data: [lowCnt, medCnt, highCnt],
+          backgroundColor: ['#3ab87a','#e8a840','#e05c5c'],
+          borderColor: '#ffffff',
+          borderWidth: 3,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        cutout: '65%',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { color: '#4a6a88', font: { size: 11 }, padding: 12 }
+          }
+        }
+      }
+    });
+  }
+
+  // ── Confidence bar chart ─────────────────────────────────────
+  const confCtx = document.getElementById('conf-chart');
+  if (confCtx) {
+    new Chart(confCtx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Confidence %',
+          data: confVals,
+          backgroundColor: confVals.map(v =>
+            v >= 80 ? '#3ab87a' : v >= 60 ? '#e8a840' : '#e05c5c'),
+          borderRadius: 6,
+          borderSkipped: false,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+          y: {
+            min: 0, max: 100,
+            ticks: { color: '#7aaac8', callback: v => v + '%' },
+            grid: { color: '#e8f4ff' }
+          },
+          x: {
+            ticks: {
+              color: '#7aaac8',
+              font: { size: 10 },
+              maxRotation: 35
+            },
+            grid: { display: false }
+          }
+        },
+        plugins: { legend: { display: false } }
+      }
+    });
+  }
+
+  // ── Block contribution horizontal bar ────────────────────────
+  const avgBrain = (analyses.reduce((s,a)=>s+a.brain_pct,0)/total).toFixed(1);
+  const avgHeart = (analyses.reduce((s,a)=>s+a.heart_pct,0)/total).toFixed(1);
+  const avgInter = (analyses.reduce((s,a)=>s+a.interaction_pct,0)/total).toFixed(1);
+
+  const blockCtx = document.getElementById('block-chart');
+  if (blockCtx) {
+    new Chart(blockCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Brain (EEG)', 'Heart (ECG)', 'Interaction'],
+        datasets: [{
+          data: [avgBrain, avgHeart, avgInter],
+          backgroundColor: ['#8a78e0','#e05c5c','#28b8c8'],
+          borderRadius: 8,
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+          x: {
+            min: 0, max: 100,
+            ticks: { color: '#7aaac8', callback: v => v + '%' },
+            grid: { color: '#e8f4ff' }
+          },
+          y: {
+            ticks: { color: '#4a6a88', font: { size: 11 } },
+            grid: { display: false }
+          }
+        },
+        plugins: { legend: { display: false } }
+      }
+    });
+  }
+
+  // ── Trend summary card ───────────────────────────────────────
+  const recentAvg = analyses
+    .slice(0, Math.min(3, total))
+    .reduce((s,a) => s + a.risk_level, 0) / Math.min(3, total);
+
+  document.getElementById('trend-summary').innerHTML = `
+    <div class="trend-badge trend-${trendClass}">
+      ${trendIcon} ${trendLabel}
+    </div>
+    <div style="font-size:0.83rem;color:#4a6a88;line-height:1.8;margin-top:6px">
+      Latest risk:
+      <strong style="color:#1a2a3a">${latest.risk_name}</strong><br/>
+      Confidence:
+      <strong style="color:#1a6fbd">${latest.confidence}%</strong><br/>
+      Recent avg:
+      <strong style="color:#1a2a3a">
+        ${recentAvg <= 0.5 ? 'Low' : recentAvg <= 1.5 ? 'Medium' : 'High'}
+      </strong><br/>
+      Total scans:
+      <strong style="color:#1a2a3a">${total}</strong><br/>
+      Avg confidence:
+      <strong style="color:#1a6fbd">${avgConf}%</strong>
+    </div>
+  `;
+
+  // ── Recommendations ──────────────────────────────────────────
+  const recs = getRecommendations(latest, PROFILE, highCnt, total);
+  document.getElementById('recommendations').innerHTML =
+    recs.map(r => `
+      <div class="rec-item rec-${r.priority}">
+        <div class="rec-icon">${r.icon}</div>
+        <div class="rec-text">
+          <h4>${r.title}</h4>
+          <p>${r.desc}</p>
+        </div>
+      </div>`).join('');
+
+  // ── History table ────────────────────────────────────────────
+  document.getElementById('history-tbody').innerHTML =
+    analyses.map((a, i) => {
+      const pillCls = a.risk_level === 0 ? 'pill-low'
+                    : a.risk_level === 1 ? 'pill-medium' : 'pill-high';
+      return `
+        <tr>
+          <td style="color:#9ab8d0">${i+1}</td>
+          <td style="color:#4a6a88;font-size:0.8rem">${a.timestamp}</td>
+          <td>
+            <span class="risk-pill ${pillCls}">${a.risk_name}</span>
+          </td>
+          <td style="color:#1a6fbd;font-weight:600">${a.confidence}%</td>
+          <td style="font-size:0.78rem">
+            <span style="color:#3ab87a">${a.prob_low}%</span> /
+            <span style="color:#e8a840">${a.prob_medium}%</span> /
+            <span style="color:#e05c5c">${a.prob_high}%</span>
+          </td>
+          <td>
+            <div class="mini-bar-wrap">
+              <div class="mini-bar">
+                <div class="mini-fill fill-brain"
+                     style="width:${a.brain_pct}%"></div>
+              </div>
+              <div class="mini-bar">
+                <div class="mini-fill fill-heart"
+                     style="width:${a.heart_pct}%"></div>
+              </div>
+              <div class="mini-bar">
+                <div class="mini-fill fill-interaction"
+                     style="width:${a.interaction_pct}%"></div>
+              </div>
+            </div>
+            <div style="font-size:0.7rem;color:#9ab8d0;margin-top:3px">
+              🧠${a.brain_pct}% 💓${a.heart_pct}% 🔗${a.interaction_pct}%
+            </div>
+          </td>
+          <td style="font-size:0.8rem;color:#4a6a88">${a.xgb_prediction}</td>
+          <td style="font-size:0.8rem;color:#4a6a88">${a.rf_prediction}</td>
+          <td class="${a.models_agree ? 'agree-yes':'agree-no'}">
+            ${a.models_agree ? '✅ Yes' : '⚠️ No'}
+          </td>
+        </tr>`;
+    }).join('');
+}
+
+// ── Recommendations engine ────────────────────────────────────
+function getRecommendations(latest, profile, highCnt, total) {
+  const recs  = [];
+  const r     = latest.risk_level;
+  const hours = profile.avg_working_hours;
+  const prof  = (profile.profession || '').toLowerCase();
+  const health= (profile.health_issues || '').toLowerCase();
+
+  if (r === 2) {
+    recs.push({
+      icon:'🏥', priority:'high',
+      title:'Consult a Mental Health Professional',
+      desc:'Your recent analysis shows High Risk. Consider speaking with a psychologist or psychiatrist for a thorough evaluation.'
+    });
+    recs.push({
+      icon:'🧘', priority:'high',
+      title:'Practice Daily Mindfulness',
+      desc:'Start with 10 minutes of guided meditation daily. Apps like Headspace or Calm can help reduce stress markers.'
+    });
+  } else if (r === 1) {
+    recs.push({
+      icon:'⚠️', priority:'medium',
+      title:'Monitor Your Stress Levels',
+      desc:'Medium Risk detected. Schedule regular check-ins and track how your risk evolves with repeated analyses.'
+    });
+  } else {
+    recs.push({
+      icon:'✅', priority:'low',
+      title:'Maintain Your Healthy Habits',
+      desc:'Low Risk detected! Keep up your current lifestyle. Regular exercise and sleep hygiene are your best allies.'
+    });
+  }
+
+  if (hours > 10) {
+    recs.push({
+      icon:'⏰', priority:'high',
+      title:'Reduce Overtime Hours',
+      desc:`You average ${hours}h/day which is above the recommended 8h. Chronic overwork significantly elevates mental health risk.`
+    });
+  } else if (hours > 8) {
+    recs.push({
+      icon:'☕', priority:'medium',
+      title:'Take Regular Breaks',
+      desc:'Use the Pomodoro technique — 25 min work, 5 min break. It maintains focus without increasing stress biomarkers.'
+    });
+  }
+
+  if (prof.includes('doctor') || prof.includes('nurse') ||
+      prof.includes('healthcare')) {
+    recs.push({
+      icon:'👨‍⚕️', priority:'high',
+      title:'Healthcare Burnout Prevention',
+      desc:'Structured debriefing, peer support groups, and mandatory rest are clinically proven to reduce healthcare burnout.'
+    });
+  } else if (prof.includes('engineer') || prof.includes('developer') ||
+             prof.includes('software')) {
+    recs.push({
+      icon:'💻', priority:'medium',
+      title:'Tech Worker Digital Detox',
+      desc:'Screen fatigue elevates cortisol. Take a 20-min screen-free break every 2 hours and avoid screens 1h before sleep.'
+    });
+  }
+
+  if (total >= 3 && highCnt / total >= 0.5) {
+    recs.push({
+      icon:'📅', priority:'high',
+      title:'Weekly Self-Assessment',
+      desc:'More than 50% of your analyses show High Risk. Weekly monitoring helps catch deterioration early.'
+    });
+  }
+
+  recs.push({
+    icon:'🏃', priority:'low',
+    title:'Regular Physical Activity',
+    desc:'30 minutes of moderate exercise 5x/week is clinically proven to improve HRV and reduce EEG stress markers.'
+  });
+
+  recs.push({
+    icon:'😴', priority:'low',
+    title:'Prioritise Sleep Quality',
+    desc:'Aim for 7–9 hours. Poor sleep directly worsens both EEG coherence and heart rate variability (HRV).'
+  });
+
+  const order = { high:0, medium:1, low:2 };
+  recs.sort((a,b) => order[a.priority] - order[b.priority]);
+  return recs.slice(0, 5);
+}
+</script>
+</body>
+</html>

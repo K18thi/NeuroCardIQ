@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>User Detail — Admin</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Poppins',sans-serif;background:#f0f7ff;
+     color:#1a2a3a;min-height:100vh}
+nav{background:#1a2a3a;padding:14px 32px;display:flex;
+    align-items:center;gap:16px;
+    box-shadow:0 2px 12px rgba(0,0,0,0.15)}
+.brand{color:#7eb8f7;font-size:1.1rem;font-weight:600}
+.admin-tag{background:#e05c5c;color:#fff;padding:3px 10px;
+           border-radius:20px;font-size:0.72rem;font-weight:600}
+.nav-links{margin-left:auto;display:flex;gap:8px}
+nav a{color:#aac;text-decoration:none;padding:7px 14px;
+      border-radius:8px;font-size:0.85rem;transition:all 0.2s}
+nav a:hover{background:rgba(255,255,255,0.1);color:#fff}
+nav a.signout{background:rgba(224,92,92,0.15);color:#e05c5c}
+
+main{max-width:1100px;margin:32px auto;padding:0 24px}
+.back-btn{display:inline-flex;align-items:center;gap:6px;
+          color:#1a6fbd;text-decoration:none;font-size:0.85rem;
+          font-weight:500;margin-bottom:20px;padding:7px 14px;
+          background:#e0f0ff;border-radius:8px;transition:all 0.2s}
+.back-btn:hover{background:#cce4f7}
+
+.header-card{background:#fff;border-radius:16px;padding:24px 28px;
+             border:1px solid #cce0f5;margin-bottom:20px;
+             display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+             box-shadow:0 2px 12px rgba(26,111,189,0.06)}
+.avatar-lg{width:64px;height:64px;border-radius:50%;
+           background:#e0f0ff;display:flex;align-items:center;
+           justify-content:center;font-size:1.6rem;font-weight:600;
+           color:#1a6fbd;flex-shrink:0}
+.hc-name{font-size:1.2rem;font-weight:600;color:#1a2a3a}
+.hc-sub{font-size:0.82rem;color:#7aaac8;margin-top:4px}
+.hc-actions{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
+.btn-exp{padding:9px 18px;background:#e8fff4;color:#1a8a5a;
+         border:1px solid #9fe1cb;border-radius:8px;
+         font-size:0.82rem;font-weight:600;text-decoration:none;
+         transition:all 0.2s}
+.btn-exp:hover{background:#d4f5e8}
+.btn-del{padding:9px 18px;background:#fff0f0;color:#e05c5c;
+         border:1px solid #f5c0c0;border-radius:8px;
+         font-size:0.82rem;font-weight:600;cursor:pointer;
+         font-family:inherit;transition:all 0.2s}
+.btn-del:hover{background:#ffe0e0}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;
+       gap:20px;margin-bottom:20px}
+.card{background:#fff;border-radius:16px;padding:22px;
+      border:1px solid #cce0f5;
+      box-shadow:0 2px 12px rgba(26,111,189,0.06)}
+.card h3{font-size:0.8rem;text-transform:uppercase;
+         letter-spacing:1px;color:#1a6fbd;
+         margin-bottom:16px;font-weight:600;
+         padding-bottom:10px;border-bottom:1px solid #e8f4ff}
+
+.info-row{display:flex;justify-content:space-between;
+          padding:8px 0;border-bottom:1px solid #f8fcff;
+          font-size:0.85rem}
+.info-row:last-child{border-bottom:none}
+.ir-lbl{color:#7aaac8;font-weight:500}
+.ir-val{color:#1a2a3a;font-weight:500;text-align:right}
+
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);
+           gap:12px;margin-bottom:20px}
+.stat{background:#fff;border-radius:12px;padding:16px;
+      text-align:center;border:1px solid #cce0f5;
+      box-shadow:0 2px 8px rgba(26,111,189,0.06)}
+.stat .sv{font-size:1.5rem;font-weight:600;color:#1a6fbd}
+.stat .sl{font-size:0.68rem;color:#7aaac8;margin-top:3px;
+          text-transform:uppercase}
+.stat.low  .sv{color:#3ab87a}
+.stat.med  .sv{color:#e8a840}
+.stat.high .sv{color:#e05c5c}
+
+table{width:100%;border-collapse:collapse;font-size:0.82rem}
+th{text-align:left;color:#7aaac8;padding:10px 12px;
+   border-bottom:2px solid #e0f0ff;font-size:0.72rem;
+   text-transform:uppercase;letter-spacing:0.5px;font-weight:600}
+td{padding:11px 12px;border-bottom:1px solid #f0f7ff}
+tr:hover td{background:#f8fcff}
+
+.pill{padding:3px 12px;border-radius:20px;font-size:0.75rem;
+      font-weight:600;display:inline-block}
+.pill-low {background:#e8fff4;color:#1a8a5a;border:1px solid #9fe1cb}
+.pill-med {background:#fff8e8;color:#b07a10;border:1px solid #f5d080}
+.pill-high{background:#fff0f0;color:#c03030;border:1px solid #f5c0c0}
+
+.mini-bar-wrap{display:flex;gap:4px;align-items:center}
+.mini-bar{height:6px;border-radius:3px;
+          background:#e0f0ff;flex:1;overflow:hidden}
+.mini-fill{height:100%;border-radius:3px}
+.fill-b{background:#8a78e0}
+.fill-h{background:#e05c5c}
+.fill-i{background:#28b8c8}
+
+.agree-y{color:#3ab87a;font-size:0.8rem}
+.agree-n{color:#e8a840;font-size:0.8rem}
+.high-risk {
+  color: #e05c5c;
+}
+
+.low-risk {
+  color: #3ab87a;
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <span style="font-size:16px">🧠</span>
+  <div class="brand">NeuroCardiQ</div>
+  <span class="admin-tag">ADMIN</span>
+  <div class="nav-links">
+    <a href="/admin/dashboard">📊 Dashboard</a>
+    <a href="/admin/users">👥 Users</a>
+    <a href="/signout" class="signout">Sign Out</a>
+  </div>
+</nav>
+
+<main>
+
+  <a href="/admin/users" class="back-btn">← Back to Users</a>
+
+  <!-- Header -->
+  <div class="header-card">
+    <div class="avatar-lg">
+      {{ profile.name[0].upper() if profile else '?' }}
+    </div>
+    <div>
+      <div class="hc-name">
+        {{ profile.name if profile else 'No Profile' }}
+      </div>
+      <div class="hc-sub">
+        {{ user.email or user.phone }}
+        &nbsp;·&nbsp;
+        Joined {{ user.created_at.strftime('%d %b %Y') }}
+      </div>
+    </div>
+    <div class="hc-actions">
+      <a href="/admin/export/{{ user.id }}"
+         class="btn-exp">⬇️ Export CSV</a>
+      <form method="POST"
+            action="/admin/delete/{{ user.id }}"
+            onsubmit="return confirm(
+              'Permanently delete this user and ALL their data?')">
+        <button type="submit" class="btn-del">
+          🗑️ Delete User
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Stats row -->
+  <div class="stats-row">
+    <div class="stat">
+      <div class="sv">{{ total }}</div>
+      <div class="sl">Total Scans</div>
+    </div>
+    <div class="stat low">
+      <div class="sv">{{ low_cnt }}</div>
+      <div class="sl">Low Risk</div>
+    </div>
+    <div class="stat med">
+      <div class="sv">{{ med_cnt }}</div>
+      <div class="sl">Med Risk</div>
+    </div>
+    <div class="stat high">
+      <div class="sv">{{ high_cnt }}</div>
+      <div class="sl">High Risk</div>
+    </div>
+    <div class="stat">
+      <div class="sv">{{ avg_conf }}%</div>
+      <div class="sl">Avg Conf</div>
+    </div>
+  </div>
+
+  <div class="grid2">
+
+    <!-- Profile info -->
+    <div class="card">
+      <h3>👤 Profile Details</h3>
+      {% if profile %}
+      <div class="info-row">
+        <span class="ir-lbl">Age</span>
+        <span class="ir-val">{{ profile.age }}</span>
+      </div>
+      <div class="info-row">
+        <span class="ir-lbl">Gender</span>
+        <span class="ir-val">{{ profile.gender }}</span>
+      </div>
+      <div class="info-row">
+        <span class="ir-lbl">Profession</span>
+        <span class="ir-val">{{ profile.profession }}</span>
+      </div>
+      <div class="info-row">
+        <span class="ir-lbl">Avg Working Hours</span>
+        <span class="ir-val">
+          {{ profile.avg_working_hours }}h/day
+        </span>
+      </div>
+      <div class="info-row">
+        <span class="ir-lbl">Height</span>
+        <span class="ir-val">
+          {{ profile.height_cm ~ ' cm'
+             if profile.height_cm else 'Not provided' }}
+        </span>
+      </div>
+      <div class="info-row">
+        <span class="ir-lbl">Weight</span>
+        <span class="ir-val">
+          {{ profile.weight_kg ~ ' kg'
+             if profile.weight_kg else 'Not provided' }}
+        </span>
+      </div>
+      <div class="info-row">
+        <span class="ir-lbl">BMI</span>
+        <span class="ir-val">
+          {% if bmi %}
+          {{ bmi }} — {{ bmi_cat }}
+          {% else %}Not available{% endif %}
+        </span>
+      </div>
+      <div class="info-row">
+        <span class="ir-lbl">Health Issues</span>
+        <span class="ir-val">
+          {{ profile.health_issues or 'None reported' }}
+        </span>
+      </div>
+      {% else %}
+      <p style="color:#7aaac8">No profile data.</p>
+      {% endif %}
+    </div>
+
+    <!-- Risk summary -->
+    <div class="card">
+      <h3>📊 Risk Summary</h3>
+      <div class="info-row">
+        <span class="ir-lbl">Latest Risk</span>
+        <span class="ir-val">
+          {% if analyses %}
+          <span class="pill
+            {% if analyses[0].risk_level==0 %}pill-low
+            {% elif analyses[0].risk_level==1 %}pill-med
+            {% else %}pill-high{% endif %}">
+            {{ analyses[0].risk_name }}
+          </span>
+          {% else %}No scans{% endif %}
+        </span>
+      </div>
+      <div class="info-row">
+        <span class="ir-lbl">Latest Confidence</span>
+        <span class="ir-val" style="color:#1a6fbd;font-weight:600">
+          {{ analyses[0].confidence ~ '%' if analyses else '—' }}
+        </span>
+      </div>
+      <div class="info-row">
+        <span class="ir-lbl">Trend</span>
+        <span class="ir-val">{{ trend }}</span>
+      </div>
+      <div class="info-row">
+        <span class="ir-lbl">Avg Confidence</span>
+        <span class="ir-val">{{ avg_conf }}%</span>
+      </div>
+      <div class="info-row">
+        <span class="ir-lbl">High Risk Rate</span>
+        <span class="ir-val 
+            {% if total>0 and high_cnt/total>0.5 %}high-risk
+            {% else %}low-risk{% endif %}">
+            {{ ((high_cnt/total*100)|round(1))
+             if total>0 else 0 }}%
+        </span>
+      </div>
+      {% if analyses %}
+      <div class="info-row">
+        <span class="ir-lbl">Last Scan</span>
+        <span class="ir-val" style="color:#7aaac8">
+          {{ analyses[0].timestamp.strftime('%d %b %Y %H:%M') }}
+        </span>
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <!-- Full analysis history -->
+  <div class="card">
+    <h3>📋 Complete Analysis History
+      ({{ total }} scans)
+    </h3>
+    {% if analyses %}
+    <div style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Date</th>
+            <th>Risk</th>
+            <th>Confidence</th>
+            <th>Low / Med / High</th>
+            <th>Brain–Heart–Int</th>
+            <th>XGB</th>
+            <th>RF</th>
+            <th>Agree</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in analyses %}
+          <tr>
+            <td style="color:#9ab8d0">{{ loop.index }}</td>
+            <td style="color:#4a6a88;font-size:0.78rem">
+              {{ a.timestamp.strftime('%d %b %Y %H:%M') }}
+            </td>
+            <td>
+              <span class="pill
+                {% if a.risk_level==0 %}pill-low
+                {% elif a.risk_level==1 %}pill-med
+                {% else %}pill-high{% endif %}">
+                {{ a.risk_name }}
+              </span>
+            </td>
+            <td style="color:#1a6fbd;font-weight:600">
+              {{ a.confidence }}%
+            </td>
+            <td style="font-size:0.78rem">
+              <span style="color:#3ab87a">{{ a.prob_low }}%</span> /
+              <span style="color:#e8a840">{{ a.prob_medium }}%</span> /
+              <span style="color:#e05c5c">{{ a.prob_high }}%</span>
+            </td>
+            <td>
+            {% set brain = a.brain_pct %}
+            {% set heart = a.heart_pct %}
+            {% set interaction = a.interaction_pct %}
+
+            <div class="mini-bar-wrap">
+                <div class="mini-bar">
+                    <div class="mini-fill fill-b"
+                         style="width: {{ brain }}%;"></div>
+            </div>
+                <div class="mini-bar">
+                    <div class="mini-fill fill-h"
+                         style="width: {{ heart }}%;"></div>
+            </div>
+                <div class="mini-bar">
+                    <div class="mini-fill fill-i"
+                        style="width: {{ interaction }}%;"></div>
+            </div>
+            </div>
+              <div style="font-size:0.68rem;color:#9ab8d0;margin-top:2px">
+                🧠{{ a.brain_pct }}%
+                💓{{ a.heart_pct }}%
+                🔗{{ a.interaction_pct }}%
+              </div>
+            </td>
+            <td style="font-size:0.78rem;color:#4a6a88">
+              {{ a.xgb_prediction }}
+            </td>
+            <td style="font-size:0.78rem;color:#4a6a88">
+              {{ a.rf_prediction }}
+            </td>
+            <td class="{{ 'agree-y' if a.models_agree else 'agree-n' }}">
+              {{ '✅ Yes' if a.models_agree else '⚠️ No' }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p style="color:#7aaac8;font-size:0.88rem">
+      No analyses yet for this user.
+    </p>
+    {% endif %}
+  </div>
+
+</main>
+</body>
+</html>

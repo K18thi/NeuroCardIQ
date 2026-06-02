@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Users — Admin</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Poppins',sans-serif;background:#f0f7ff;
+     color:#1a2a3a;min-height:100vh}
+nav{background:#1a2a3a;padding:14px 32px;display:flex;
+    align-items:center;gap:16px;
+    box-shadow:0 2px 12px rgba(0,0,0,0.15)}
+.brand{color:#7eb8f7;font-size:1.1rem;font-weight:600}
+.admin-tag{background:#e05c5c;color:#fff;padding:3px 10px;
+           border-radius:20px;font-size:0.72rem;font-weight:600}
+.nav-links{margin-left:auto;display:flex;gap:8px}
+nav a{color:#aac;text-decoration:none;padding:7px 14px;
+      border-radius:8px;font-size:0.85rem;transition:all 0.2s}
+nav a:hover{background:rgba(255,255,255,0.1);color:#fff}
+nav a.active{background:rgba(126,184,247,0.2);color:#7eb8f7}
+nav a.signout{background:rgba(224,92,92,0.15);color:#e05c5c}
+
+main{max-width:1200px;margin:32px auto;padding:0 24px}
+.page-header{display:flex;align-items:center;
+             justify-content:space-between;
+             margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.page-title{font-size:1.3rem;color:#1a6fbd;font-weight:600}
+.page-sub{color:#7aaac8;font-size:0.85rem;margin-top:3px}
+
+/* Search + filter bar */
+.filter-bar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.search-wrap{flex:1;min-width:200px;position:relative}
+.search-wrap input{width:100%;padding:10px 14px 10px 36px;
+                   border-radius:10px;border:1px solid #cce0f5;
+                   background:#fff;font-size:0.88rem;outline:none;
+                   font-family:inherit;color:#1a2a3a;transition:all 0.2s}
+.search-wrap input:focus{border-color:#1a6fbd;
+                          box-shadow:0 0 0 3px rgba(26,111,189,0.1)}
+.search-icon{position:absolute;left:12px;top:50%;
+             transform:translateY(-50%);color:#7aaac8;font-size:14px}
+select.filter{padding:10px 14px;border-radius:10px;
+              border:1px solid #cce0f5;background:#fff;
+              font-size:0.85rem;color:#1a2a3a;outline:none;
+              font-family:inherit;cursor:pointer}
+.btn-search{padding:10px 20px;
+            background:linear-gradient(135deg,#5aa9e6,#1a6fbd);
+            color:#fff;border:none;border-radius:10px;
+            font-size:0.85rem;font-weight:600;cursor:pointer;
+            font-family:inherit}
+
+/* User cards grid */
+.users-grid{display:grid;grid-template-columns:repeat(auto-fill,
+            minmax(340px,1fr));gap:16px}
+.user-card{background:#fff;border-radius:14px;padding:20px;
+           border:1px solid #cce0f5;
+           box-shadow:0 2px 8px rgba(26,111,189,0.06);
+           transition:all 0.2s}
+.user-card:hover{box-shadow:0 4px 20px rgba(26,111,189,0.12);
+                 transform:translateY(-2px)}
+.uc-header{display:flex;align-items:center;gap:12px;
+           margin-bottom:14px}
+.avatar{width:44px;height:44px;border-radius:50%;
+        background:#e0f0ff;display:flex;align-items:center;
+        justify-content:center;font-weight:600;color:#1a6fbd;
+        font-size:1.1rem;flex-shrink:0}
+.uc-name{font-size:0.95rem;font-weight:600;color:#1a2a3a}
+.uc-sub{font-size:0.75rem;color:#7aaac8;margin-top:2px}
+.uc-badge{margin-left:auto}
+
+.pill{padding:3px 12px;border-radius:20px;font-size:0.75rem;
+      font-weight:600;display:inline-block}
+.pill-low {background:#e8fff4;color:#1a8a5a;border:1px solid #9fe1cb}
+.pill-med {background:#fff8e8;color:#b07a10;border:1px solid #f5d080}
+.pill-high{background:#fff0f0;color:#c03030;border:1px solid #f5c0c0}
+.pill-none{background:#f0f7ff;color:#7aaac8;border:1px solid #cce0f5}
+
+.uc-stats{display:grid;grid-template-columns:repeat(3,1fr);
+          gap:8px;margin-bottom:14px}
+.uc-stat{text-align:center;background:#f8fcff;border-radius:8px;
+         padding:8px 4px;border:1px solid #e8f4ff}
+.uc-stat .sv{font-size:1.1rem;font-weight:600;color:#1a6fbd}
+.uc-stat .sl{font-size:0.68rem;color:#7aaac8;margin-top:2px}
+
+.uc-info{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.info-chip{background:#f0f7ff;color:#4a6a88;padding:3px 10px;
+           border-radius:6px;font-size:0.72rem;border:1px solid #e0f0ff}
+
+.uc-actions{display:flex;gap:8px}
+.btn-view{flex:1;padding:8px;background:#e0f0ff;color:#1a6fbd;
+          border:none;border-radius:8px;font-size:0.82rem;
+          font-weight:600;cursor:pointer;text-decoration:none;
+          text-align:center;font-family:inherit;transition:all 0.2s}
+.btn-view:hover{background:#cce4f7}
+.btn-del{padding:8px 16px;background:#fff0f0;color:#e05c5c;
+         border:1px solid #f5c0c0;border-radius:8px;
+         font-size:0.82rem;font-weight:600;cursor:pointer;
+         font-family:inherit;transition:all 0.2s}
+.btn-del:hover{background:#ffe0e0}
+.btn-exp{padding:8px 16px;background:#e8fff4;color:#1a8a5a;
+         border:1px solid #9fe1cb;border-radius:8px;
+         font-size:0.82rem;font-weight:600;cursor:pointer;
+         text-decoration:none;text-align:center;
+         font-family:inherit;transition:all 0.2s}
+.btn-exp:hover{background:#d4f5e8}
+
+.no-users{text-align:center;padding:60px 24px;
+          background:#fff;border-radius:16px;
+          border:1px solid #cce0f5;color:#7aaac8}
+.flash{padding:12px 16px;border-radius:10px;
+       margin-bottom:16px;font-size:0.85rem}
+.flash.success{background:#e8fff4;color:#1a8a5a;
+               border:1px solid #9fe1cb}
+.flash.danger{background:#fff0f0;color:#c03030;
+              border:1px solid #f5c0c0}
+</style>
+</head>
+<body>
+
+<nav>
+  <span style="font-size:16px">🧠</span>
+  <div class="brand">NeuroCardiQ</div>
+  <span class="admin-tag">ADMIN</span>
+  <div class="nav-links">
+    <a href="/admin/dashboard">📊 Dashboard</a>
+    <a href="/admin/users" class="active">👥 Users</a>
+    <a href="/signout" class="signout">Sign Out</a>
+  </div>
+</nav>
+
+<main>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for cat, msg in messages %}
+    <div class="flash {{ cat }}">{{ msg }}</div>
+    {% endfor %}
+  {% endwith %}
+
+  <div class="page-header">
+    <div>
+      <div class="page-title">👥 All Users</div>
+      <div class="page-sub">{{ total }} user(s) found</div>
+    </div>
+  </div>
+
+  <!-- Search + Filter bar -->
+  <form method="GET" action="/admin/users">
+    <div class="filter-bar">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" name="q" value="{{ search }}"
+               placeholder="Search by name, email, profession..."/>
+      </div>
+      <select name="risk" class="filter">
+        <option value=""  {% if not risk_f %}selected{% endif %}>
+          All Risk Levels
+        </option>
+        <option value="0" {% if risk_f=='0' %}selected{% endif %}>
+          🟢 Low Risk
+        </option>
+        <option value="1" {% if risk_f=='1' %}selected{% endif %}>
+          🟡 Medium Risk
+        </option>
+        <option value="2" {% if risk_f=='2' %}selected{% endif %}>
+          🔴 High Risk
+        </option>
+      </select>
+      <select name="sort" class="filter">
+        <option value="newest"
+          {% if sort=='newest' %}selected{% endif %}>
+          Newest First
+        </option>
+        <option value="oldest"
+          {% if sort=='oldest' %}selected{% endif %}>
+          Oldest First
+        </option>
+        <option value="name"
+          {% if sort=='name' %}selected{% endif %}>
+          Name A–Z
+        </option>
+      </select>
+      <button type="submit" class="btn-search">Search</button>
+    </div>
+  </form>
+
+  <!-- User cards -->
+  {% if user_stats %}
+  <div class="users-grid">
+    {% for us in user_stats %}
+    {% set u = us.user %}
+    {% set p = us.profile %}
+    <div class="user-card">
+
+      <!-- Header -->
+      <div class="uc-header">
+        <div class="avatar">
+          {{ p.name[0].upper() if p else '?' }}
+        </div>
+        <div>
+          <div class="uc-name">{{ p.name if p else 'No Profile' }}</div>
+          <div class="uc-sub">
+            {{ u.email or u.phone or 'No contact' }}
+          </div>
+        </div>
+        <div class="uc-badge">
+          {% if us.latest %}
+          <span class="pill
+            {% if us.latest.risk_level==0 %}pill-low
+            {% elif us.latest.risk_level==1 %}pill-med
+            {% else %}pill-high{% endif %}">
+            {{ us.latest.risk_name }}
+          </span>
+          {% else %}
+          <span class="pill pill-none">No scan</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="uc-stats">
+        <div class="uc-stat">
+          <div class="sv">{{ us.total }}</div>
+          <div class="sl">Total Scans</div>
+        </div>
+        <div class="uc-stat">
+          <div class="sv" style="color:#e05c5c">
+            {{ us.high_cnt }}
+          </div>
+          <div class="sl">High Risk</div>
+        </div>
+        <div class="uc-stat">
+          <div class="sv">{{ us.avg_conf }}%</div>
+          <div class="sl">Avg Conf</div>
+        </div>
+      </div>
+
+      <!-- Profile chips -->
+      {% if p %}
+      <div class="uc-info">
+        <span class="info-chip">{{ p.age }}yrs</span>
+        <span class="info-chip">{{ p.gender }}</span>
+        <span class="info-chip">{{ p.profession }}</span>
+        <span class="info-chip">{{ p.avg_working_hours }}h/day</span>
+        {% if us.bmi %}
+        <span class="info-chip">BMI {{ us.bmi }}</span>
+        {% endif %}
+        <span class="info-chip">
+          Joined {{ u.created_at.strftime('%b %Y') }}
+        </span>
+      </div>
+      {% endif %}
+
+      <!-- Actions -->
+      <div class="uc-actions">
+        <a href="/admin/user/{{ u.id }}"
+           class="btn-view">👁 View Detail</a>
+        <a href="/admin/export/{{ u.id }}"
+           class="btn-exp">⬇ CSV</a>
+        <form method="POST"
+              action="/admin/delete/{{ u.id }}"
+              style="display:inline"
+              onsubmit="return confirm(
+                'Delete {{ p.name if p else u.email }}? '
+                +'This cannot be undone.')">
+          <button type="submit" class="btn-del">🗑</button>
+        </form>
+      </div>
+
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="no-users">
+    <div style="font-size:2.5rem;margin-bottom:12px">👤</div>
+    <div style="font-size:1rem;font-weight:500;margin-bottom:6px">
+      No users found
+    </div>
+    <div style="font-size:0.85rem">
+      Try a different search or filter
+    </div>
+  </div>
+  {% endif %}
+
+</main>
+</body>
+</html>

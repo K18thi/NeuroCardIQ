@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sign Up — NeuroCardiQ</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Poppins', sans-serif;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e8f4ff, #f7fbff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.container { width: 100%; max-width: 640px; }
+
+.logo { text-align: center; margin-bottom: 26px; }
+.logo h1 { font-size: 1.7rem; color: #2a6fb3; font-weight: 600; }
+.logo p  { color: #6b8cae; font-size: 0.9rem; margin-top: 6px; }
+
+.card {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(14px);
+  border-radius: 22px;
+  padding: 40px 36px;
+  border: 1px solid rgba(120,170,220,0.25);
+  box-shadow: 0 20px 60px rgba(80,120,170,0.15);
+}
+.card h2    { font-size: 1.35rem; color: #2a6fb3; margin-bottom: 6px; }
+.subtitle   { font-size: 0.9rem; color: #6b8cae; margin-bottom: 26px; }
+
+.section-title {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #2a6fb3;
+  margin: 28px 0 14px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #d9e8f7;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.form-grid .full { grid-column: span 2; }
+
+.form-group { margin-bottom: 0; }
+.form-group label {
+  display: block;
+  font-size: 0.78rem;
+  color: #5d7fa3;
+  margin-bottom: 6px;
+  letter-spacing: 0.4px;
+}
+.optional-tag { font-size: 0.7rem; color: #8aa9c6; margin-left: 4px; }
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #cfe3f7;
+  background: #f9fcff;
+  font-size: 0.92rem;
+  transition: all 0.2s;
+  outline: none;
+  font-family: inherit;
+  color: #2a3a4a;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #5aa9e6;
+  box-shadow: 0 0 0 3px rgba(90,169,230,0.15);
+  background: #ffffff;
+}
+.form-group textarea { resize: vertical; min-height: 72px; }
+
+/* ── Height input with unit toggle ── */
+.height-input-wrap {
+  display: flex;
+  gap: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #cfe3f7;
+  background: #f9fcff;
+  transition: all 0.2s;
+}
+.height-input-wrap:focus-within {
+  border-color: #5aa9e6;
+  box-shadow: 0 0 0 3px rgba(90,169,230,0.15);
+  background: #ffffff;
+}
+.height-input-wrap input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 12px 14px;
+  font-size: 0.92rem;
+  outline: none;
+  font-family: inherit;
+  color: #2a3a4a;
+  min-width: 0;
+}
+.height-unit-select {
+  border: none !important;
+  border-left: 1px solid #cfe3f7 !important;
+  border-radius: 0 !important;
+  background: #eaf4ff !important;
+  padding: 12px 10px !important;
+  font-size: 0.82rem !important;
+  color: #2a6fb3 !important;
+  font-weight: 500;
+  cursor: pointer;
+  width: auto !important;
+  min-width: 80px;
+  outline: none;
+  font-family: inherit;
+}
+.height-unit-select:focus {
+  border-color: transparent !important;
+  box-shadow: none !important;
+  background: #daeeff !important;
+}
+
+/* ft/in secondary input */
+.ft-in-wrap {
+  display: none;
+  gap: 8px;
+}
+.ft-in-wrap.show { display: flex; }
+.ft-in-wrap .fi-group { flex: 1; }
+.ft-in-wrap .fi-group label {
+  font-size: 0.72rem;
+  color: #8aa9c6;
+  margin-bottom: 4px;
+  display: block;
+}
+.ft-in-wrap input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #cfe3f7;
+  background: #f9fcff;
+  font-size: 0.9rem;
+  outline: none;
+  font-family: inherit;
+  color: #2a3a4a;
+}
+.ft-in-wrap input:focus {
+  border-color: #5aa9e6;
+  box-shadow: 0 0 0 3px rgba(90,169,230,0.15);
+}
+
+/* ── BMI display ── */
+.bmi-box {
+  margin-top: 8px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: #f0f8ff;
+  border: 1px solid #cce0f5;
+  font-size: 0.88rem;
+  color: #6b8cae;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s;
+}
+.bmi-box .bmi-val {
+  font-size: 1.2rem;
+  font-weight: 600;
+  min-width: 50px;
+}
+.bmi-box .bmi-cat { font-size: 0.82rem; }
+.bmi-box .bmi-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: #dceefa;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-left: 8px;
+}
+.bmi-box .bmi-bar { height: 100%; border-radius: 3px; transition: all 0.4s; }
+
+/* ── Strength bar ── */
+.strength-bar {
+  height: 5px; border-radius: 3px;
+  background: #e3effa; margin-top: 8px; overflow: hidden;
+}
+.strength-fill { height: 100%; border-radius: 3px; transition: all 0.3s; width: 0%; }
+
+/* ── Errors ── */
+.errors {
+  background: #ffe8e8; border: 1px solid #f5bcbc;
+  border-radius: 12px; padding: 14px 18px; margin-bottom: 22px;
+}
+.errors p { color: #c0392b; font-size: 0.88rem; margin-bottom: 3px; }
+.errors p:last-child { margin-bottom: 0; }
+
+/* ── Button ── */
+.btn {
+  width: 100%; padding: 14px;
+  background: linear-gradient(135deg, #5aa9e6, #2a6fb3);
+  color: white; border: none; border-radius: 12px;
+  font-size: 1rem; font-weight: 600;
+  cursor: pointer; transition: all 0.25s; margin-top: 28px;
+  font-family: inherit;
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(90,169,230,0.3); }
+
+.link-row {
+  text-align: center; font-size: 0.9rem;
+  color: #6b8cae; margin-top: 20px;
+}
+.link-row a { color: #2a6fb3; text-decoration: none; font-weight: 500; }
+.link-row a:hover { text-decoration: underline; }
+
+@media (max-width: 560px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .form-grid .full { grid-column: span 1; }
+  .card { padding: 28px 20px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="logo">
+    <h1>🧠 NeuroCardiQ</h1>
+    <p>Create your account to get started</p>
+  </div>
+
+  <div class="card">
+    <h2>Create Account</h2>
+    <p class="subtitle">Fill in your details to begin your risk assessment journey</p>
+
+    {% if errors %}
+    <div class="errors">
+      {% for e in errors %}<p>⚠️ {{ e }}</p>{% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="POST" action="/signup" id="signup-form">
+
+      <!-- ── Account Credentials ── -->
+      <div class="section-title">🔐 Account Credentials</div>
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Email or Phone Number</label>
+          <input type="text" name="identifier"
+                 placeholder="you@email.com or +91xxxxxxxxxx"
+                 value="{{ form.get('identifier','') }}" required/>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" name="password"
+                 placeholder="Min 8 characters" required
+                 oninput="updateStrength(this.value)"/>
+          <div class="strength-bar">
+            <div class="strength-fill" id="strength-fill"></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <input type="password" name="confirm"
+                 placeholder="Re-enter password" required/>
+        </div>
+      </div>
+
+      <!-- ── Personal Details ── -->
+      <div class="section-title">👤 Personal Details</div>
+      <div class="form-grid">
+
+        <div class="form-group full">
+          <label>Full Name</label>
+          <input type="text" name="name"
+                 placeholder="Your full name"
+                 value="{{ form.get('name','') }}" required/>
+        </div>
+
+        <div class="form-group">
+          <label>Age</label>
+          <input type="number" name="age" placeholder="25"
+                 min="10" max="120"
+                 value="{{ form.get('age','') }}" required/>
+        </div>
+
+        <div class="form-group">
+          <label>Gender</label>
+          <select name="gender" required>
+            <option value="" disabled
+              {% if not form.get('gender') %}selected{% endif %}>
+              Select gender
+            </option>
+            {% for g in ['Male','Female','Non-binary','Prefer not to say'] %}
+            <option value="{{ g }}"
+              {% if form.get('gender')==g %}selected{% endif %}>
+              {{ g }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Profession</label>
+          <input type="text" name="profession"
+                 placeholder="e.g. Software Engineer"
+                 value="{{ form.get('profession','') }}" required/>
+        </div>
+
+        <div class="form-group">
+          <label>Avg Working Hours / Day</label>
+          <input type="number" name="avg_working_hours"
+                 placeholder="8" min="0" max="24" step="0.5"
+                 value="{{ form.get('avg_working_hours','') }}" required/>
+        </div>
+
+      </div>
+
+      <!-- ── Body Metrics ── -->
+      <div class="section-title">📏 Body Metrics</div>
+      <div class="form-grid">
+
+        <!-- Height with unit toggle -->
+        <div class="form-group">
+          <label>Height
+            <span class="optional-tag">(select unit)</span>
+          </label>
+
+          <!-- cm input row -->
+          <div class="height-input-wrap" id="cm-wrap">
+            <input type="number" id="height-cm-input"
+                   placeholder="e.g. 170"
+                   min="100" max="250" step="0.5"
+                   oninput="onHeightChange()"/>
+            <select class="height-unit-select"
+                    id="unit-select"
+                    onchange="onUnitChange(this.value)">
+              <option value="cm"  selected>cm</option>
+              <option value="ft"         >ft / in</option>
+              <option value="m"          >metres</option>
+            </select>
+          </div>
+
+          <!-- ft/in secondary inputs (shown when ft selected) -->
+          <div class="ft-in-wrap" id="ft-in-wrap">
+            <div class="fi-group">
+              <label>Feet</label>
+              <input type="number" id="ft-input"
+                     placeholder="5" min="3" max="8" step="1"
+                     oninput="onFtInChange()"/>
+            </div>
+            <div class="fi-group">
+              <label>Inches</label>
+              <input type="number" id="in-input"
+                     placeholder="7" min="0" max="11" step="1"
+                     oninput="onFtInChange()"/>
+            </div>
+          </div>
+
+          <!-- metres input (shown when m selected) -->
+          <div id="m-wrap" style="display:none; margin-top:8px">
+            <input type="number" id="m-input"
+                   placeholder="e.g. 1.70"
+                   min="1.0" max="2.5" step="0.01"
+                   style="width:100%;padding:12px 14px;border-radius:10px;
+                          border:1px solid #cfe3f7;background:#f9fcff;
+                          font-size:0.92rem;outline:none;font-family:inherit;
+                          color:#2a3a4a;"
+                   oninput="onHeightChange()"/>
+          </div>
+
+          <!-- hidden field sent to server (always in cm) -->
+          <input type="hidden" name="height_cm" id="height-cm-hidden"
+                 value="{{ form.get('height_cm','') }}"/>
+        </div>
+
+        <!-- Weight with unit toggle -->
+        <div class="form-group">
+          <label>Weight
+            <span class="optional-tag">(select unit)</span>
+          </label>
+          <div class="height-input-wrap" id="kg-wrap">
+            <input type="number" id="weight-input"
+                   placeholder="e.g. 65"
+                   min="20" max="300" step="0.5"
+                   oninput="onWeightChange()"/>
+            <select class="height-unit-select"
+                    id="weight-unit-select"
+                    onchange="onWeightUnitChange(this.value)">
+              <option value="kg" selected>kg</option>
+              <option value="lbs"        >lbs</option>
+              <option value="stone"      >stone</option>
+            </select>
+          </div>
+          <!-- hidden field always in kg -->
+          <input type="hidden" name="weight_kg" id="weight-kg-hidden"
+                 value="{{ form.get('weight_kg','') }}"/>
+        </div>
+
+        <!-- BMI display — full width -->
+        <div class="form-group full">
+          <label>BMI <span class="optional-tag">(auto-calculated)</span></label>
+          <div class="bmi-box" id="bmi-box">
+            <span class="bmi-val" id="bmi-val">—</span>
+            <div>
+              <div class="bmi-cat" id="bmi-cat"
+                   style="color:#6b8cae">
+                Enter height and weight
+              </div>
+              <div style="font-size:0.75rem;color:#9ab8d0;margin-top:2px"
+                   id="bmi-range"></div>
+            </div>
+            <div class="bmi-bar-wrap">
+              <div class="bmi-bar" id="bmi-bar"
+                   style="width:0%;background:#cce0f5"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Health Issues -->
+        <div class="form-group full">
+          <label>
+            Health Issues
+            <span class="optional-tag">(optional)</span>
+          </label>
+          <textarea name="health_issues"
+                    placeholder="e.g. Hypertension, Anxiety (leave blank if none)"
+          >{{ form.get('health_issues','') }}</textarea>
+        </div>
+
+      </div><!-- /form-grid body metrics -->
+
+      <button type="submit" class="btn">Create Account →</button>
+    </form>
+
+    <div class="link-row">
+      Already have an account? <a href="/signin">Sign in</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── State ─────────────────────────────────────────────────────
+let heightCm = 0;
+let weightKg = 0;
+
+// ── Unit conversion helpers ───────────────────────────────────
+const cmToFt  = cm  => ({ ft: Math.floor(cm / 30.48), inches: Math.round((cm % 30.48) / 2.54) });
+const ftToCm  = (ft, inch) => Math.round((ft * 30.48) + (inch * 2.54));
+const mToCm   = m   => Math.round(m * 100);
+const lbsToKg = lbs   => Math.round(lbs   * 0.453592 * 10) / 10;
+const stToKg  = stone => Math.round(stone * 6.35029  * 10) / 10;
+
+// ── Height unit change ────────────────────────────────────────
+function onUnitChange(unit) {
+  const cmInput  = document.getElementById('height-cm-input');
+  const ftWrap   = document.getElementById('ft-in-wrap');
+  const mWrap    = document.getElementById('m-wrap');
+  const cmWrapIn = document.getElementById('cm-wrap').querySelector('input');
+
+  // hide all secondary inputs
+  ftWrap.classList.remove('show');
+  mWrap.style.display = 'none';
+
+  if (unit === 'cm') {
+    cmWrapIn.style.display = 'block';
+    if (heightCm) cmInput.value = heightCm;
+  } else if (unit === 'ft') {
+    cmWrapIn.style.display = 'none';
+    ftWrap.classList.add('show');
+    if (heightCm) {
+      const {ft, inches} = cmToFt(heightCm);
+      document.getElementById('ft-input').value = ft;
+      document.getElementById('in-input').value = inches;
+    }
+  } else if (unit === 'm') {
+    cmWrapIn.style.display = 'none';
+    mWrap.style.display = 'block';
+    if (heightCm) {
+      document.getElementById('m-input').value = (heightCm / 100).toFixed(2);
+    }
+  }
+}
+
+function onHeightChange() {
+  const unit = document.getElementById('unit-select').value;
+  if (unit === 'cm') {
+    const val = parseFloat(document.getElementById('height-cm-input').value);
+    heightCm  = isNaN(val) ? 0 : val;
+  } else if (unit === 'm') {
+    const val = parseFloat(document.getElementById('m-input').value);
+    heightCm  = isNaN(val) ? 0 : mToCm(val);
+  }
+  document.getElementById('height-cm-hidden').value = heightCm || '';
+  calcBMI();
+}
+
+function onFtInChange() {
+  const ft  = parseFloat(document.getElementById('ft-input').value)  || 0;
+  const ins = parseFloat(document.getElementById('in-input').value)   || 0;
+  heightCm  = ftToCm(ft, ins);
+  document.getElementById('height-cm-hidden').value = heightCm || '';
+  calcBMI();
+}
+
+// ── Weight unit change ────────────────────────────────────────
+function onWeightUnitChange(unit) {
+  const input = document.getElementById('weight-input');
+  if (!weightKg) return;
+  if (unit === 'kg')    input.value = weightKg;
+  else if (unit === 'lbs')   input.value = Math.round(weightKg / 0.453592 * 10) / 10;
+  else if (unit === 'stone') input.value = Math.round(weightKg / 6.35029  * 10) / 10;
+}
+
+function onWeightChange() {
+  const unit = document.getElementById('weight-unit-select').value;
+  const val  = parseFloat(document.getElementById('weight-input').value);
+  if (isNaN(val)) { weightKg = 0; }
+  else if (unit === 'kg')    weightKg = val;
+  else if (unit === 'lbs')   weightKg = lbsToKg(val);
+  else if (unit === 'stone') weightKg = stToKg(val);
+  document.getElementById('weight-kg-hidden').value = weightKg || '';
+  calcBMI();
+}
+
+// ── BMI calculation & display ─────────────────────────────────
+function calcBMI() {
+  const box   = document.getElementById('bmi-box');
+  const valEl = document.getElementById('bmi-val');
+  const catEl = document.getElementById('bmi-cat');
+  const ranEl = document.getElementById('bmi-range');
+  const bar   = document.getElementById('bmi-bar');
+
+  if (!heightCm || !weightKg || heightCm < 100 || weightKg < 20) {
+    valEl.textContent = '—';
+    catEl.textContent = 'Enter height and weight';
+    catEl.style.color = '#6b8cae';
+    ranEl.textContent = '';
+    bar.style.width   = '0%';
+    box.style.background = '#f0f8ff';
+    return;
+  }
+
+  const bmi = weightKg / ((heightCm / 100) ** 2);
+
+  // Category + colour + bar width + range info
+  let cat, color, barW, range, bg;
+  if      (bmi < 16.0) { cat='Severely Underweight'; color='#e05c5c'; barW='8%';  range='BMI < 16';      bg='#fff5f5'; }
+  else if (bmi < 18.5) { cat='Underweight';          color='#e8a840'; barW='18%'; range='BMI 16–18.5';   bg='#fffbf0'; }
+  else if (bmi < 25.0) { cat='Normal Weight ✓';      color='#3ab87a'; barW='45%'; range='BMI 18.5–24.9'; bg='#f0fff7'; }
+  else if (bmi < 30.0) { cat='Overweight';           color='#e8a840'; barW='62%'; range='BMI 25–29.9';   bg='#fffbf0'; }
+  else if (bmi < 35.0) { cat='Obese Class I';        color='#e05c5c'; barW='78%'; range='BMI 30–34.9';   bg='#fff5f5'; }
+  else if (bmi < 40.0) { cat='Obese Class II';       color='#c0392b'; barW='90%'; range='BMI 35–39.9';   bg='#fff0f0'; }
+  else                  { cat='Obese Class III';      color='#a93226'; barW='100%';range='BMI ≥ 40';      bg='#ffebeb'; }
+
+  valEl.textContent    = bmi.toFixed(1);
+  valEl.style.color    = color;
+  catEl.textContent    = cat;
+  catEl.style.color    = color;
+  ranEl.textContent    = range;
+  bar.style.width      = barW;
+  bar.style.background = color;
+  box.style.background = bg;
+  box.style.borderColor= color + '55';
+}
+
+// ── Password strength ─────────────────────────────────────────
+function updateStrength(pw) {
+  const fill = document.getElementById('strength-fill');
+  let score = 0;
+  if (pw.length >= 8)          score++;
+  if (/[A-Z]/.test(pw))        score++;
+  if (/[0-9]/.test(pw))        score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  const colors = ['#e74c3c','#f39c12','#f1c40f','#2ecc71'];
+  const widths  = ['25%','50%','75%','100%'];
+  fill.style.width      = score ? widths[score-1] : '0%';
+  fill.style.background = score ? colors[score-1] : 'transparent';
+}
+
+// ── Pre-fill from server (on validation error re-render) ──────
+window.addEventListener('DOMContentLoaded', () => {
+  const hv = document.getElementById('height-cm-hidden').value;
+  const wv = document.getElementById('weight-kg-hidden').value;
+  if (hv) {
+    heightCm = parseFloat(hv);
+    document.getElementById('height-cm-input').value = heightCm;
+  }
+  if (wv) {
+    weightKg = parseFloat(wv);
+    document.getElementById('weight-input').value = weightKg;
+  }
+  if (hv || wv) calcBMI();
+});
+</script>
+</body>
+</html>

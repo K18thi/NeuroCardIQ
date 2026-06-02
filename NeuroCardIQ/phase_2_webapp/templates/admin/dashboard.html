@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Admin Dashboard — NeuroCardiQ</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Poppins',sans-serif;background:#f0f7ff;
+     color:#1a2a3a;min-height:100vh}
+nav{background:#1a2a3a;padding:14px 32px;display:flex;
+    align-items:center;gap:16px;
+    box-shadow:0 2px 12px rgba(0,0,0,0.15)}
+.brand{color:#7eb8f7;font-size:1.1rem;font-weight:600}
+.admin-tag{background:#e05c5c;color:#fff;padding:3px 10px;
+           border-radius:20px;font-size:0.72rem;font-weight:600}
+.nav-links{margin-left:auto;display:flex;gap:8px}
+nav a{color:#aac;text-decoration:none;padding:7px 14px;
+      border-radius:8px;font-size:0.85rem;transition:all 0.2s}
+nav a:hover{background:rgba(255,255,255,0.1);color:#fff}
+nav a.active{background:rgba(126,184,247,0.2);color:#7eb8f7}
+nav a.signout{background:rgba(224,92,92,0.15);color:#e05c5c}
+
+main{max-width:1200px;margin:32px auto;padding:0 24px}
+.page-title{font-size:1.4rem;color:#1a6fbd;font-weight:600;
+            margin-bottom:6px}
+.page-sub{color:#7aaac8;font-size:0.85rem;margin-bottom:24px}
+
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);
+            gap:16px;margin-bottom:24px}
+.stat{background:#fff;border-radius:14px;padding:20px;
+      text-align:center;border:1px solid #cce0f5;
+      box-shadow:0 2px 8px rgba(26,111,189,0.06)}
+.stat .val{font-size:2rem;font-weight:600;color:#1a6fbd}
+.stat .lbl{font-size:0.72rem;color:#7aaac8;margin-top:4px;
+           text-transform:uppercase;letter-spacing:0.5px}
+.stat.low  .val{color:#3ab87a}
+.stat.med  .val{color:#e8a840}
+.stat.high .val{color:#e05c5c}
+.stat.new  .val{color:#8a78e0}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;
+       gap:20px;margin-bottom:20px}
+.card{background:#fff;border-radius:16px;padding:24px;
+      border:1px solid #cce0f5;
+      box-shadow:0 2px 12px rgba(26,111,189,0.06)}
+.card h3{font-size:0.8rem;text-transform:uppercase;
+         letter-spacing:1px;color:#1a6fbd;
+         margin-bottom:16px;font-weight:600}
+
+table{width:100%;border-collapse:collapse;font-size:0.82rem}
+th{text-align:left;color:#7aaac8;padding:8px 10px;
+   border-bottom:2px solid #e0f0ff;font-size:0.72rem;
+   text-transform:uppercase;letter-spacing:0.5px;font-weight:600}
+td{padding:10px 10px;border-bottom:1px solid #f0f7ff;
+   color:#1a2a3a}
+tr:hover td{background:#f8fcff}
+
+.pill{padding:3px 12px;border-radius:20px;font-size:0.75rem;
+      font-weight:600;display:inline-block}
+.pill-low {background:#e8fff4;color:#1a8a5a;border:1px solid #9fe1cb}
+.pill-med {background:#fff8e8;color:#b07a10;border:1px solid #f5d080}
+.pill-high{background:#fff0f0;color:#c03030;border:1px solid #f5c0c0}
+
+.gender-row{display:flex;align-items:center;gap:10px;
+            margin-bottom:10px}
+.gender-lbl{font-size:0.85rem;color:#1a2a3a;min-width:120px}
+.gender-bar-bg{flex:1;height:10px;background:#e0f0ff;
+               border-radius:5px;overflow:hidden}
+.gender-bar{height:100%;border-radius:5px;background:#1a6fbd;
+            transition:width 1s}
+.gender-cnt{font-size:0.8rem;color:#7aaac8;min-width:30px;
+            text-align:right}
+
+.top-user{display:flex;align-items:center;gap:12px;
+          padding:10px 0;border-bottom:1px solid #f0f7ff}
+.top-user:last-child{border-bottom:none}
+.avatar{width:36px;height:36px;border-radius:50%;
+        background:#e0f0ff;display:flex;align-items:center;
+        justify-content:center;font-weight:600;color:#1a6fbd;
+        font-size:0.9rem;flex-shrink:0}
+.top-name{font-size:0.85rem;font-weight:500;color:#1a2a3a}
+.top-sub{font-size:0.75rem;color:#7aaac8}
+.top-cnt{margin-left:auto;background:#e0f0ff;color:#1a6fbd;
+         padding:3px 12px;border-radius:20px;font-size:0.78rem;
+         font-weight:600}
+
+.btn-view{padding:5px 14px;background:#e0f0ff;color:#1a6fbd;
+          border:none;border-radius:6px;font-size:0.78rem;
+          font-weight:600;cursor:pointer;text-decoration:none;
+          font-family:inherit;transition:all 0.2s}
+.btn-view:hover{background:#cce4f7}
+</style>
+</head>
+<body>
+
+<nav>
+  <span style="font-size:16px">🧠</span>
+  <div class="brand">NeuroCardiQ</div>
+  <span class="admin-tag">ADMIN</span>
+  <div class="nav-links">
+    <a href="/admin/dashboard" class="active">📊 Dashboard</a>
+    <a href="/admin/users">👥 Users</a>
+    <a href="/signout" class="signout">Sign Out</a>
+  </div>
+</nav>
+
+<main>
+  <div class="page-title">📊 Admin Dashboard</div>
+  <div class="page-sub">
+    System overview — NeuroCardiQ Mental Health Platform
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat">
+      <div class="val">{{ total_users }}</div>
+      <div class="lbl">Total Users</div>
+    </div>
+    <div class="stat new">
+      <div class="val">{{ new_users }}</div>
+      <div class="lbl">New This Week</div>
+    </div>
+    <div class="stat">
+      <div class="val">{{ total_analyses }}</div>
+      <div class="lbl">Total Analyses</div>
+    </div>
+    <div class="stat">
+      <div class="val">{{ avg_conf }}%</div>
+      <div class="lbl">Avg Confidence</div>
+    </div>
+    <div class="stat low">
+      <div class="val">{{ low_count }}</div>
+      <div class="lbl">🟢 Low Risk</div>
+    </div>
+    <div class="stat med">
+      <div class="val">{{ med_count }}</div>
+      <div class="lbl">🟡 Medium Risk</div>
+    </div>
+    <div class="stat high">
+      <div class="val">{{ high_count }}</div>
+      <div class="lbl">🔴 High Risk</div>
+    </div>
+    <div class="stat">
+      <div class="val">
+        {{ ((high_count / total_analyses * 100) | round(1))
+           if total_analyses > 0 else 0 }}%
+      </div>
+      <div class="lbl">High Risk Rate</div>
+    </div>
+  </div>
+
+  <div class="grid2">
+
+    <!-- Recent analyses -->
+    <div class="card">
+      <h3>🕐 Recent Analyses</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Date</th>
+            <th>Risk</th>
+            <th>Conf</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in recent %}
+          {% set u = a.user %}
+          <tr>
+            <td>
+              <a href="/admin/user/{{ u.id }}"
+                 style="color:#1a6fbd;text-decoration:none;
+                        font-weight:500">
+                {{ u.profile.name if u.profile else u.email }}
+              </a>
+            </td>
+            <td style="color:#7aaac8;font-size:0.78rem">
+              {{ a.timestamp.strftime('%d %b %H:%M') }}
+            </td>
+            <td>
+              <span class="pill
+                {% if a.risk_level==0 %}pill-low
+                {% elif a.risk_level==1 %}pill-med
+                {% else %}pill-high{% endif %}">
+                {{ a.risk_name }}
+              </span>
+            </td>
+            <td style="color:#1a6fbd;font-weight:500">
+              {{ a.confidence }}%
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Top users -->
+    <div class="card">
+      <h3>🏆 Most Active Users</h3>
+      {% for user, cnt in top_users %}
+      <div class="top-user">
+        <div class="avatar">
+          {{ user.profile.name[0].upper()
+             if user.profile else '?' }}
+        </div>
+        <div>
+          <div class="top-name">
+            {{ user.profile.name if user.profile else user.email }}
+          </div>
+          <div class="top-sub">
+            {{ user.profile.profession if user.profile else '' }}
+          </div>
+        </div>
+        <div class="top-cnt">{{ cnt }} scans</div>
+        <a href="/admin/user/{{ user.id }}"
+           class="btn-view">View</a>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Gender distribution -->
+    <div class="card">
+      <h3>⚧ Gender Distribution</h3>
+      {% set total_g = gender_dist.values()|sum %}
+      {% for gender, cnt in gender_dist.items() %}
+      <div class="gender-row">
+        <div class="gender-lbl">{{ gender }}</div>
+        <div class="gender-bar-bg">
+          <div class="gender-bar"
+               style="width: {{ ((cnt / total_g) * 100 if total_g > 0 else 0) | round(1) }}%"
+          </div>
+        </div>
+        <div class="gender-cnt">{{ cnt }}</div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Profession risk -->
+    <div class="card">
+      <h3>💼 Risk by Profession Tier</h3>
+      {% for tier, counts in prof_risk.items() %}
+      {% set total_t = counts|sum %}
+      {% if total_t > 0 %}
+      <div style="margin-bottom:14px">
+        <div style="font-size:0.82rem;font-weight:500;
+                    color:#1a2a3a;margin-bottom:6px;
+                    text-transform:capitalize">
+          {{ tier }} stress ({{ total_t }} users)
+        </div>
+        <div style="display:flex;gap:3px;height:10px;
+                    border-radius:5px;overflow:hidden">
+          <div style="flex: {{ counts[0] }}; background : #3ab87a;
+            min-width: {{ '2px' if counts[0] > 0 else '0' }}">
+          </div>
+          <div style="flex: {{ counts[1] }};background: #e8a840;
+                      min-width: {{ '2px' if counts[1]>0 else '0' }}">
+          </div>
+          <div style="flex: {{ counts[2] }};background : #e05c5c;
+                      min-width : {{ '2px' if counts[2]>0 else '0' }}">
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;margin-top:5px;
+                    font-size:0.72rem;color:#7aaac8">
+          <span>🟢 {{ counts[0] }}</span>
+          <span>🟡 {{ counts[1] }}</span>
+          <span>🔴 {{ counts[2] }}</span>
+        </div>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+
+  </div>
+</main>
+</body>
+</html>
