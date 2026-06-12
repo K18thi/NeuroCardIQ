@@ -25,7 +25,9 @@ NeuroCardIQ addresses this challenge by using physiological signals that can pro
 * Interactive Dashboard for result visualization
 * Prediction History Tracking and User Analytics
 * Personalized Recommendation System
-
+  
+  <img width="1600" height="780" alt="image" src="https://github.com/user-attachments/assets/70c617ef-41a8-41a6-9b81-4fe89e1e0fd6" />
+  
 ---
 
 ## Dataset
@@ -47,6 +49,8 @@ The project uses the DREAMER dataset, which contains synchronized EEG and ECG re
 7. Model Evaluation and Comparison
 8. Explainable AI Analysis using SHAP
 9. Dashboard-Based Result Visualization
+
+ <img width="1600" height="775" alt="image" src="https://github.com/user-attachments/assets/384cb6da-424c-4e90-aa91-099b7c4735a1" />
 
 ---
 
@@ -72,6 +76,10 @@ The models were evaluated using:
 | XGBoost       | 97.58%   |
 
 XGBoost achieved the best overall performance and was selected as the final prediction model.
+
+<img width="1600" height="772" alt="image" src="https://github.com/user-attachments/assets/9b4e3223-2953-45ad-8a01-aa844e363a42" />
+
+<img width="1600" height="309" alt="image" src="https://github.com/user-attachments/assets/2bf199a0-2c58-43b8-8314-d80fc43a5dee" />
 
 ---
 
